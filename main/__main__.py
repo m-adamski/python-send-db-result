@@ -3,13 +3,14 @@ import sys
 import argparse
 import smtplib
 import config.config as config_module
+import database.mysql as mysql
 
 
 def main():
     # Define Argument Parser
     parser = argparse.ArgumentParser(description="Generate an Excel file containing the result of the SQL query")
-    parser.add_argument("query", type=str, help="Path to the file containing the query to be executed")
-    parser.add_argument("--config", type=str, help="Path to the configuration file")
+    parser.add_argument("query", type=str, help="SQL query or path to the file containing the SQL query")
+    parser.add_argument("--config-file", type=str, help="Path to the configuration file")
 
     # Add database arguments
     database_group = parser.add_argument_group("database arguments")
@@ -23,7 +24,7 @@ def main():
 
     # Add SMTP arguments
     smtp_group = parser.add_argument_group("smtp arguments")
-    smtp_group.add_argument("--smtp-server", type=str, help="The host name of the SMTP server")
+    smtp_group.add_argument("--smtp-server", type=str, help="The host name or IP address of the SMTP server")
     smtp_group.add_argument("--smtp-port", type=int, help="The TCP/IP port of the SMTP server. Must be an integer")
     smtp_group.add_argument("--smtp-user", type=str, help="The user name used to authenticate with the SMTP server")
     smtp_group.add_argument("--smtp-password", type=str, help="The password to authenticate the user with the SMTP server")
@@ -31,14 +32,21 @@ def main():
     # Parse provided arguments
     try:
         arguments = parser.parse_args()
+        config = config_module.Config(arguments)
+        query = arguments.query
 
-        # Make sure that SQL query file exists
+        # Read provided file if query argument contains path to SQL file
         if os.path.isfile(arguments.query):
-            config = config_module.Config(arguments)
+            query_handler = open(arguments.query, "r")
+            query = query_handler.read()
+            query_handler.close()
 
-        else:
-            print("The file containing the query was not found in provided path")
-            sys.exit(1)
+        # Execute query
+        result = mysql.execute(config, query)
+
+        for row in result:
+            print(row)
+
     except argparse.ArgumentError:
         parser.print_help()
         sys.exit(1)
