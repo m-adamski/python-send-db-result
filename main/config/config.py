@@ -23,8 +23,15 @@ class Config:
     # SMTP configuration
     smtp_server = ""
     smtp_port = 587
+    smtp_protocol = "STARTTLS"
+    smtp_timeout = 10
     smtp_user = ""
     smtp_password = ""
+    smtp_sender = ""
+    smtp_receiver = ""
+    smtp_subject = ""
+    smtp_message = ""
+    smtp_attachment = "report.xlsx"
 
     def __init__(self, arguments):
         # Read config file
@@ -67,6 +74,13 @@ class Config:
             "db-collation": self.db_collation,
             "smtp-server": self.smtp_server,
             "smtp-port": self.smtp_port,
+            "smtp-protocol": self.smtp_protocol,
+            "smtp-timeout": self.smtp_timeout,
             "smtp-user": self.smtp_user,
-            "smtp-password": self.smtp_password
+            "smtp-password": self.smtp_password,
+            "smtp-sender": self.smtp_sender,
+            "smtp-receiver": self.smtp_receiver,
+            "smtp-subject": self.smtp_subject,
+            "smtp-message": self.smtp_message,
+            "smtp-attachment": self.smtp_attachment
         }

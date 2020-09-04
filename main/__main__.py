@@ -1,9 +1,11 @@
 import os
 import sys
 import argparse
-import smtplib
+import datetime
 import config.config as config_module
-import database.mysql as mysql
+import database.mysql as mysql_module
+import mailer.mailer as mailer_module
+import workbook.workbook as workbook_module
 
 
 def main():
@@ -26,26 +28,52 @@ def main():
     smtp_group = parser.add_argument_group("smtp arguments")
     smtp_group.add_argument("--smtp-server", type=str, help="The host name or IP address of the SMTP server")
     smtp_group.add_argument("--smtp-port", type=int, help="The TCP/IP port of the SMTP server. Must be an integer")
+    smtp_group.add_argument("--smtp-protocol", type=str, help="Encryption protocol (only STARTTLS supported)")
+    smtp_group.add_argument("--smtp-timeout", type=int, help="Timeout in seconds for blocking operations like the connection attempt")
     smtp_group.add_argument("--smtp-user", type=str, help="The user name used to authenticate with the SMTP server")
     smtp_group.add_argument("--smtp-password", type=str, help="The password to authenticate the user with the SMTP server")
+    smtp_group.add_argument("--smtp-sender", type=str, help="The email address of the sender")
+    smtp_group.add_argument("--smtp-receiver", type=str, help="Email addresses of the message recipients (separated by a comma)")
+    smtp_group.add_argument("--smtp-subject", type=str, help="Message subject")
+    smtp_group.add_argument("--smtp-message", type=str, help="Body of the message sent as plain text")
+    smtp_group.add_argument("--smtp-attachment", type=str, help="Name of the file that will be attached (add the extension .xlsx)")
 
     # Parse provided arguments
     try:
+        print("Launch date: ", datetime.datetime.today())
+        print("Reading the given arguments and generating the configuration")
         arguments = parser.parse_args()
         config = config_module.Config(arguments)
         query = arguments.query
 
         # Read provided file if query argument contains path to SQL file
         if os.path.isfile(arguments.query):
+            print("Reading an SQL query file")
             query_handler = open(arguments.query, "r")
             query = query_handler.read()
             query_handler.close()
 
         # Execute query
-        result = mysql.execute(config, query)
+        print("Running the SQL query")
+        result = mysql_module.execute(config, query, True)
 
-        for row in result:
-            print(row)
+        # Receive stream from generated workbook
+        if result is not None:
+            print("Generating an Excel document")
+            workbook_stream = workbook_module.write(result)
+
+            # Generating message
+            print("Sending a message")
+            message = mailer_module.generate_message(config, workbook_stream)
+
+            # Send message
+            if message is not None:
+                send_result = mailer_module.send(config, message)
+
+                # Check sending status
+                if send_result:
+                    print("The message has been sent correctly")
+                    exit(0)
 
     except argparse.ArgumentError:
         parser.print_help()

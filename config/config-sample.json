@@ -1,0 +1,24 @@
+{
+    "db": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "user": "root",
+        "password": "",
+        "database": "",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci"
+    },
+    "smtp": {
+        "server": "",
+        "port": 587,
+        "protocol": "STARTTLS",
+        "timeout": 10,
+        "user": "",
+        "password": "",
+        "sender": "",
+        "receiver": "",
+        "subject": "",
+        "message": "The attachment includes an automatically generated report",
+        "attachment": "report.xlsx"
+    }
+}

@@ -2,7 +2,7 @@ import mysql.connector
 from mysql.connector import errorcode
 
 
-def execute(config, query):
+def execute(config, query, include_headers):
     try:
 
         # Create connection
@@ -22,6 +22,12 @@ def execute(config, query):
 
         # Fetch result
         result = cursor.fetchall()
+
+        # Include headers when requested
+        if include_headers:
+            result_headers = [cursor.column_names]
+            result_headers.extend(result)
+            result = result_headers
 
         # Close cursor and connection
         cursor.close()
