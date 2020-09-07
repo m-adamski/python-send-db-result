@@ -1,0 +1,6 @@
+et-xmlfile==1.0.1
+jdcal==1.4.1
+mysql-connector-python==8.0.21
+openpyxl==3.0.5
+protobuf==3.13.0
+six==1.15.0
