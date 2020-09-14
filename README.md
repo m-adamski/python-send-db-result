@@ -35,11 +35,11 @@ make venv
 In order to run the module with automatic connection to the virtual environment, the ``bin/run-venv.sh`` file has been prepared. Just run the command in the console:
 
 ```commandline
-./bin/run-venv.sh "SELECT * FROM table" --config-file=config/config.json
+bin/run-venv.sh "SELECT * FROM table" --config-file=config/config.json
 ```
 
 ```commandline
-./bin/run-venv.sh query/sample-query.sql --config-file=config/config.json
+bin/run-venv.sh query/sample-query.sql --config-file=config/config.json
 ```
 
 ## Configuration
