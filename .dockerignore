@@ -1,0 +1,7 @@
+/config
+/query
+/venv
+
+.editorconfig
+Dockerfile
+Makefile

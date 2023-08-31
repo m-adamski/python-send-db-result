@@ -130,4 +130,5 @@ dmypy.json
 
 # Custom
 .idea/
+query/
 config/config.json

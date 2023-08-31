@@ -114,9 +114,15 @@ smtp arguments:
 
 ## Requirements
 
-* python > 3.8
-* mysql-connector-python > 8.0
-* openpyxl > 3.0
+* python >= 3.11
+* mysql-connector-python >= 8.1
+* openpyxl >= 3.1
+
+## Docker
+
+```commandline
+docker run -i -t -v ./config:/usr/src/app/config -v ./query:/usr/src/app/query -w /usr/src/app ghcr.io/m-adamski/python-send-db-result python main query/sample-query.sql --config-file=config/config.json
+```
 
 ## License
 
